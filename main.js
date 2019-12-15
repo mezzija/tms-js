@@ -32,7 +32,7 @@ console.log("\n");
 
 //задание 4
 console.log(`2>4-${2>4}`);// false
-console.log(`undefined == null-${undefined == null} `);// используется не строгое ровно , которое приводит к одинаковым типам
+console.log(`undefined == null-${undefined == null} `);// особое правило js
 console.log(`undefined === null-${undefined === null}`);// используется строгое равенсто
 console.log(`false==0-${false==0}`);// с приведением типов
 console.log(`false==" "-${false == ""}`); //с приведением типов
