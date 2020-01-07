@@ -27,11 +27,10 @@ function find(lastName){
                 return data[2];
             }
             else {
-                console.log('No results found for your request')
+                return 'No results found for your request';
             }
 }
-let lastName='KuTCHer';
-
-//find(lastName.toLowerCase());
-console.log(find(lastName.toLowerCase()));
+let lastName='Ku';
+let result=find(lastName.toLowerCase())
+console.log(result);
 
