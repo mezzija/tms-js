@@ -15,26 +15,23 @@ const data = [
         age: 24,
     },
 ];
-for(let i=0;i<2;i++){
-    data[i].lastName.toLowerCase();
-}
 function find(lastName){
     if(lastName==='kutcher'){
-        console.log(data[0]);
+        return data[0];
     }else
         if(lastName==='pitt'){
-            console.log(data[1]);
+            return data[1];
         }
         else
             if(lastName==='dakota'){
-                console.log(data[2]);
+                return data[2];
             }
             else {
                 console.log('No results found for your request')
             }
 }
-let lastName='dakota';
+let lastName='KuTCHer';
 
-find(lastName.toLowerCase());
-
+//find(lastName.toLowerCase());
+console.log(find(lastName.toLowerCase()));
 
