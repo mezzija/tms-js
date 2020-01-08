@@ -16,14 +16,17 @@ const data = [
     },
 ];
 let find=function(lastName){
-   for (let i=0;i<data.length-1;i++){
+   for (let i=0;i<=data.length-1;i++){
        if (data[i].lastName.toLowerCase()===lastName){
            return data[i];
        }
    }
     return 'No results found for your request';
 };
-let lastName='kutcHer';
-let result=find(lastName.toLowerCase());
+let lower=function(lastName){
+    return lastName.toLowerCase();
+};
+let lastName='dakota';
+let result=find(lower(lastName));
 console.log(result);
 
