@@ -30,10 +30,33 @@ let text1=document.getElementById('text1');
 let text2=document.getElementById('text2');
 let text3=document.getElementById('text3');
 const colors = ['magenta', 'cyan', 'firebrick', 'springgreen', 'skyblue'];
-
-text1.addEventListener('click',event=>{
-    for (let i=0;i<colors.length;i++){
-
+let changeStyle1=()=>{
+    let i=0;
+    return ()=>{
+        text1.style.color=colors[i];
+        i++;
+        if(i>=colors.length) i=0;
+        return i;
     }
-});
-
+};
+let changeStyle2=()=>{
+    let i=0;
+    return ()=>{
+        text2.style.color=colors[i];
+        i++;
+        if(i>=colors.length) i=0;
+        return i;
+    }
+};
+let changeStyle3=()=>{
+    let i=0;
+    return ()=>{
+        text3.style.color=colors[i];
+        i++;
+        if(i>=colors.length) i=0;
+        return i;
+    }
+};
+text1.addEventListener('click',changeStyle1());
+text2.addEventListener('click',changeStyle2());
+text3.addEventListener('click',changeStyle3());
