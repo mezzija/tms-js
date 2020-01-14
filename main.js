@@ -1,32 +1,39 @@
-const data = [
-    {
-        firstName: 'Ashton',
-        lastName: 'Kutcher',
-        age: 40,
-    },
-    {
-        firstName: 'Bradley',
-        lastName: 'Pitt',
-        age: 54,
-    },
-    {
-        firstName: 'Hannah',
-        lastName: 'Dakota',
-        age: 24,
-    },
-];
-let find=function(lastName){
-   for (let i=0;i<=data.length-1;i++){
-       if (data[i].lastName.toLowerCase()===lastName){
-           return data[i];
-       }
-   }
-    return 'No results found for your request';
+/*const sum=(a)=>(y)=>a+y;
+let result=sum(5)(2);
+console.log(result);*/
+/*let text1=document.getElementById('text1');
+let text2=document.getElementById('text2');
+let text3=document.getElementById('text3');
+const colors = ['magenta', 'cyan', 'firebrick', 'springgreen', 'skyblue'];
+let i=0;
+let j=0;
+let k=0;
+const changeStyle1=()=>{
+    text1.style.color=colors[i];
+    i++;
+    if(i>=colors.length) i=0;
 };
-let lower=function(lastName){
-    return lastName.toLowerCase();
+const changeStyle2=()=>{
+    text2.style.color=colors[j];
+    j++;
+    if(j>=colors.length) j=0;
 };
-let lastName='dakota';
-let result=find(lower(lastName));
-console.log(result);
+const changeStyle3=()=>{
+    text3.style.color=colors[k];
+    k++;
+    if(k>=colors.length) k=0;
+};
+text1.addEventListener('click',changeStyle1);
+text2.addEventListener('click',changeStyle2);
+text3.addEventListener('click',changeStyle3);*/
+let text1=document.getElementById('text1');
+let text2=document.getElementById('text2');
+let text3=document.getElementById('text3');
+const colors = ['magenta', 'cyan', 'firebrick', 'springgreen', 'skyblue'];
+
+text1.addEventListener('click',event=>{
+    for (let i=0;i<colors.length;i++){
+
+    }
+});
 

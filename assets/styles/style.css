@@ -1,0 +1,11 @@
+*{
+    margin: 0;
+}
+.container{
+    display: flex;
+    justify-content: center;
+}
+.text{
+    display: inline-flex;
+    padding: 50px;
+}
