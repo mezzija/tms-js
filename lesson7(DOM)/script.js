@@ -50,6 +50,11 @@ const products = [
         imageLink: 'https://www.apple.com/v/iphone/home/af/images/overview/compare/compare_iphone_11_pro__fvqwhr4dkhiu_large.jpg'
     }
 ];
+
+
+
+
+
 products.sort(function (a,b) {
    if(a.price.value>b.price.value){
        return -1
@@ -60,16 +65,30 @@ products.sort(function (a,b) {
     return 0;
 });
 let cost=document.getElementById('cost');
+let counter=document.getElementById('counter');
+const basketIds = [];
 
-const changeStyle=(i)=>event=>{
+basket = {
+    count: 0,
+    amount: 0,
+    products: [],
+};
+
+const changeStyle=(id)=>event=>{
+    event.preventDefault();
+    let product=products.find(item=>item.id===id);
     if(event.target.textContent==='Add to Basket'){
+
         event.target.textContent='Remove from Basket';
         event.target.style.backgroundColor='grey';
-        cost.textContent=Number(cost.textContent)+products[i].price.value;
+        cost.textContent=Number(cost.textContent)+product.price.value;
+        counter.textContent++;
     }else{
+
         event.target.textContent='Add to Basket';
         event.target.style.backgroundColor='#ff8b38';
-        cost.textContent=Number(cost.textContent)-products[i].price.value;
+        cost.textContent=Number(cost.textContent)-product.price.value;
+        counter.textContent--;
     }
 
 };
@@ -85,19 +104,21 @@ for(let i=0;i<products.length;i++){
         price='$'
     }
     newDiv.innerHTML=`
-     <img class="img" src="${products[i].imageLink}">
+       <div class="img">
+        <img  src="${products[i].imageLink}">
+        </div>
      <div class="contentInformation textColor">
                 <p>${products[i].title}</p>
                 <p class="pContentSize">${products[i].description}</p>
             </div>
             <div class="contentPrice">
-                <p class="textColor">${price}${products[i].price.value}.00</p>
-                <a  id="i" class="button" href="# ">Add to Basket</a>
+                <p class="textColor">${price}${(products[i].price.value.toFixed(2))}</p>
+                <a  class="button" href="#">Add to Basket</a>
             </div>
  `;
     section.appendChild(newDiv);
-    let a=document.getElementsByClassName('button');
-    a[i].addEventListener('click',changeStyle(i));
+    let a=newDiv.querySelector('.button');
+    a.addEventListener('click',changeStyle(products[i].id));
 
 }
 
