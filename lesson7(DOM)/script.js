@@ -50,6 +50,31 @@ const products = [
         imageLink: 'https://www.apple.com/v/iphone/home/af/images/overview/compare/compare_iphone_11_pro__fvqwhr4dkhiu_large.jpg'
     }
 ];
+products.sort(function (a,b) {
+   if(a.price.value>b.price.value){
+       return -1
+   }else
+    if(a.price.value<b.price.value){
+        return 1
+    }
+    return 0;
+});
+let cost=document.getElementById('cost');
+
+const changeStyle=(i)=>event=>{
+    if(event.target.textContent==='Add to Basket'){
+        event.target.textContent='Remove from Basket';
+        event.target.style.backgroundColor='grey';
+        cost.textContent=Number(cost.textContent)+products[i].price.value;
+    }else{
+        event.target.textContent='Add to Basket';
+        event.target.style.backgroundColor='#ff8b38';
+        cost.textContent=Number(cost.textContent)-products[i].price.value;
+    }
+
+};
+
+
 for(let i=0;i<products.length;i++){
     let newDiv=document.createElement('div');
     const section=document.getElementById('content');
@@ -66,11 +91,14 @@ for(let i=0;i<products.length;i++){
                 <p class="pContentSize">${products[i].description}</p>
             </div>
             <div class="contentPrice">
-                <p class="textColor">${price}${products[i].price.value}</p>
-                <a   class="button" href="#">Add to Basket</a>
+                <p class="textColor">${price}${products[i].price.value}.00</p>
+                <a  id="i" class="button" href="# ">Add to Basket</a>
             </div>
  `;
     section.appendChild(newDiv);
-
+    let a=document.getElementsByClassName('button');
+    a[i].addEventListener('click',changeStyle(i));
 
 }
+
+
