@@ -54,7 +54,6 @@ const products = [
 
 
 
-
 products.sort(function (a,b) {
    if(a.price.value>b.price.value){
        return -1
