@@ -104,9 +104,9 @@ const addToBasket=(id)=>event=>{
     }
 };
 
-let section=document.getElementById('content');
-const content=(products)=>{
+const section=document.getElementById('content');
 
+const content=(products)=>{
     section.innerHTML='';
     for(let i=0;i<products.length;i++){
         let newDiv=document.createElement('div');
@@ -137,10 +137,11 @@ const content=(products)=>{
 };
 
 
-content(products);
+content(contents);
 
 
 let sort=document.getElementById('sort');
+
 let flag=0;
 sort.addEventListener('click',(event)=>{
 
@@ -157,29 +158,34 @@ sort.addEventListener('click',(event)=>{
     }
 });
 
+
 const input=document.getElementById('input');
 input.addEventListener('input',(event)=>{
     let search=[];
-    for(let i=0;i<products.length;i++){
-        const reg=new RegExp(`${event.target.value}`,'i');
-        if(reg.test(products[i].title)){
-            search.unshift(products[i]);
-            contents=search;
-           if(flag>0){
-               sortAsc(contents);
-               content(contents);
+    if(event.target.value){
+        for(let i=0;i<products.length;i++){
+            const reg=new RegExp(`${event.target.value}`,'gi');
+            if(reg.test(products[i].title)){
+                search.unshift(products[i]);
+                contents=search;
+                if(flag>0){
+                    sortAsc(contents);
+                    content(contents);
 
-           }else{
-               sortDesc(contents);
-               content(contents);
-           }
+                }
+                else{
+                    sortDesc(contents);
+                    content(contents);
+                }
 
-        }else {
-            section.innerHTML=`
+            }
+        }
+    }else {
+        section.innerHTML=`
                  <p class="NoResult">No results found for your request</p>
             `;
-        }
     }
+
 
 });
 
