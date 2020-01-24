@@ -162,25 +162,23 @@ sort.addEventListener('click',(event)=>{
 const input=document.getElementById('input');
 input.addEventListener('input',(event)=>{
     let search=[];
-    if(event.target.value){
-        for(let i=0;i<products.length;i++){
-            const reg=new RegExp(`${event.target.value}`,'gi');
-            if(reg.test(products[i].title)){
-                search.unshift(products[i]);
-                contents=search;
-                if(flag>0){
-                    sortAsc(contents);
-                    content(contents);
+    for(let i=0;i<products.length;i++){
+        const reg=new RegExp(`${event.target.value}`,'gi');
+        if(reg.test(products[i].title)){
+            search.unshift(products[i]);
+            contents=search;
+           if(flag>0){
+               sortAsc(contents);
+               content(contents);
 
-                }
-                else{
-                    sortDesc(contents);
-                    content(contents);
-                }
-
-            }
+           }
+           else{
+               sortDesc(contents);
+               content(contents);
+           }
         }
-    }else {
+    }
+    if(search.length===0){
         section.innerHTML=`
                  <p class="NoResult">No results found for your request</p>
             `;
@@ -188,5 +186,4 @@ input.addEventListener('input',(event)=>{
 
 
 });
-
 
