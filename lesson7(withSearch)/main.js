@@ -50,6 +50,7 @@ const products = [
         imageLink: 'https://www.apple.com/v/iphone/home/af/images/overview/compare/compare_iphone_11_pro__fvqwhr4dkhiu_large.jpg'
     }
 ];
+let contents=products;
 
 let regDelimiter=new RegExp(/\B(?=(\d{3})+(?!\d))/g );
 
@@ -103,8 +104,9 @@ const addToBasket=(id)=>event=>{
     }
 };
 
-const content=()=>{
-    let section=document.getElementById('content');
+let section=document.getElementById('content');
+const content=(products)=>{
+
     section.innerHTML='';
     for(let i=0;i<products.length;i++){
         let newDiv=document.createElement('div');
@@ -135,7 +137,7 @@ const content=()=>{
 };
 
 
-content();
+content(products);
 
 
 let sort=document.getElementById('sort');
@@ -144,19 +146,40 @@ sort.addEventListener('click',(event)=>{
 
     if(flag===0){
         sort.textContent='Asc';
-        sortAsc(products);
-        content();
+        sortAsc(contents);
+        content(contents);
         flag++;
     }else{
         sort.textContent='Desc';
-        sortDesc(products);
-        content();
+        sortDesc(contents);
+        content(contents);
         flag=0;
     }
 });
 
 const input=document.getElementById('input');
 input.addEventListener('input',(event)=>{
+    let search=[];
+    for(let i=0;i<products.length;i++){
+        const reg=new RegExp(`${event.target.value}`,'i');
+        if(reg.test(products[i].title)){
+            search.unshift(products[i]);
+            contents=search;
+           if(flag>0){
+               sortAsc(contents);
+               content(contents);
+
+           }else{
+               sortDesc(contents);
+               content(contents);
+           }
+
+        }else {
+            section.innerHTML=`
+                 <p class="NoResult">No results found for your request</p>
+            `;
+        }
+    }
 
 });
 

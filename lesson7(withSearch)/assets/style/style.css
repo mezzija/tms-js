@@ -119,3 +119,7 @@ img{
 .active{
     background-color: #d8d8d8;
 }
+.NoResult{
+    padding-top: 50px;
+   text-align: center;
+}
