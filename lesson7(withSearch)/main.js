@@ -80,33 +80,43 @@ basket = {
 
 let amount=document.getElementById('amount');
 let counter=document.getElementById('counter');
-
 const addToBasket=(id)=>event=>{
     event.preventDefault();
     const product=products.find(item=>item.id===id);
     event.target.classList.toggle('active');
     if(event.target.classList.contains('active')){
         event.target.textContent= 'Remove from Basket';
+
         basket.count++;
         basket.amount+=product.price.value;
         basket.products.unshift(id);
         amount.textContent=basket.amount.toFixed(2).replace(regDelimiter,',');
         counter.textContent=basket.count;
+       localStorage.setItem('id',JSON.stringify(basket.products));
+
+
 
 
     }else{
         event.target.textContent= 'Add to Basket';
+
         basket.count--;
         basket.amount-=product.price.value;
         basket.products.splice(basket.products.indexOf(id),1);
         amount.textContent=basket.amount.toFixed(2).replace(regDelimiter,',');
         counter.textContent=basket.count;
+        let local=JSON.parse(localStorage.getItem('id'));
+        local.splice(local.indexOf(id),1);
+        localStorage.setItem('id',JSON.stringify(local));
+
     }
 };
 
 const section=document.getElementById('content');
+// отрисовка
 
-const content=(products)=>{
+
+const content=(products,classActive)=>{
     section.innerHTML='';
     for(let i=0;i<products.length;i++){
         let newDiv=document.createElement('div');
@@ -116,6 +126,7 @@ const content=(products)=>{
         if(products[i].price.currency==='USD'){
             currency='$';
         }
+
         newDiv.innerHTML=`
     <div class="img">
       <img src=${products[i].imageLink}>
@@ -126,13 +137,16 @@ const content=(products)=>{
     </div>
     <div class="contentPrice">
       <p >${currency}${products[i].price.value.toFixed(2).replace(regDelimiter,',')}</p>
-      <a class="button" href="#">Add to Basket</a>
+      <a class="button ${classActive}" href="#">Add to Basket</a>
     </div>
     
     `;
-        section.appendChild(newDiv);
+        let interval=JSON.parse(localStorage.getItem('id'));
+
         let a=newDiv.querySelector('.button');
         a.addEventListener('click',addToBasket(products[i].id));
+        section.appendChild(newDiv);
+
     }
 };
 
@@ -148,7 +162,6 @@ sort.addEventListener('click',(event)=>{
     if(flag===0){
         sort.textContent='Asc';
         sortAsc(contents);
-        content(contents);
         flag++;
     }else{
         sort.textContent='Desc';
@@ -186,4 +199,3 @@ input.addEventListener('input',(event)=>{
 
 
 });
-
