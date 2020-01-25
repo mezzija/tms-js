@@ -141,9 +141,14 @@ const content=(products,classActive)=>{
     </div>
     
     `;
-        let interval=JSON.parse(localStorage.getItem('id'));
 
         let a=newDiv.querySelector('.button');
+
+        let interval=JSON.parse(localStorage.getItem('id'));
+        if(interval.includes(products[i].id)){
+            a.classList.add('active');
+            a.textContent='Remove from Basket';
+        }
         a.addEventListener('click',addToBasket(products[i].id));
         section.appendChild(newDiv);
 
