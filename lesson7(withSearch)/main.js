@@ -96,30 +96,30 @@ const addToBasket=(id)=>event=>{
     event.target.classList.toggle('active');
     if(event.target.classList.contains('active')){
         event.target.textContent= 'Remove from Basket';
+        let localBasket=JSON.parse(localStorage.getItem('basket'));
+        localBasket.count++;
+        localBasket.amount+=product.price.value;
+        localBasket.products.unshift(id);
+        //basket.count++;
+        //basket.amount+=product.price.value;
+        //basket.products.unshift(id);
+        localStorage.setItem('basket',JSON.stringify(localBasket));
+        amount.textContent=localBasket.amount.toFixed(2).replace(regDelimiter,',');
+        counter.textContent=localBasket.count;
 
-        basket.count++;
-        basket.amount+=product.price.value;
-        basket.products.unshift(id);
-        localStorage.setItem('basket',JSON.stringify(basket));
-        amount.textContent=basket.amount.toFixed(2).replace(regDelimiter,',');
-        counter.textContent=basket.count;
-        //localStorage.setItem('id',JSON.stringify(basket.products));
 
 
 
 
     }else{
         event.target.textContent= 'Add to Basket';
-
-        basket.count--;
-        basket.amount-=product.price.value;
-        basket.products.splice(basket.products.indexOf(id),1);
-        localStorage.setItem('basket',JSON.stringify(basket));
-        amount.textContent=basket.amount.toFixed(2).replace(regDelimiter,',');
-        counter.textContent=basket.count;
-       // let local=JSON.parse(localStorage.getItem('id'));
-        //local.splice(local.indexOf(id),1);
-        //localStorage.setItem('id',JSON.stringify(local));
+        let localBasket=JSON.parse(localStorage.getItem('basket'));
+        localBasket.count--;
+        localBasket.amount-=product.price.value;
+        localBasket.products.splice(basket.products.indexOf(id),1);
+        localStorage.setItem('basket',JSON.stringify(localBasket));
+        amount.textContent=localBasket.amount.toFixed(2).replace(regDelimiter,',');
+        counter.textContent=localBasket.count;
 
     }
 };
@@ -128,7 +128,7 @@ const section=document.getElementById('content');
 // отрисовка
 
 
-const content=(products,classActive)=>{
+const content=(products)=>{
     section.innerHTML='';
     for(let i=0;i<products.length;i++){
         let newDiv=document.createElement('div');
@@ -149,7 +149,7 @@ const content=(products,classActive)=>{
     </div>
     <div class="contentPrice">
       <p >${currency}${products[i].price.value.toFixed(2).replace(regDelimiter,',')}</p>
-      <a class="button ${classActive}" href="#">Add to Basket</a>
+      <a class="button" href="#">Add to Basket</a>
     </div>
     
     `;
@@ -158,8 +158,8 @@ const content=(products,classActive)=>{
 
         let interval=localStorage.getItem('basket');
         if(interval.includes(products[i].id)){
-           a.classList.add('active');
-           a.textContent='Remove from Basket';
+            a.classList.add('active');
+            a.textContent='Remove from Basket';
         }
         a.addEventListener('click',addToBasket(products[i].id));
         section.appendChild(newDiv);
@@ -213,7 +213,5 @@ input.addEventListener('input',(event)=>{
                  <p class="NoResult">No results found for your request</p>
             `;
     }
-
-
 });
-
+//localStorage.clear();
