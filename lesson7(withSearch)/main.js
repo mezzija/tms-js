@@ -77,9 +77,19 @@ basket = {
     products: [],
 };
 
+if(localStorage.getItem('basket')===null){
+    localStorage.setItem('basket',JSON.stringify(basket));
+}
 
 let amount=document.getElementById('amount');
 let counter=document.getElementById('counter');
+
+let StateBasket=JSON.parse(localStorage.getItem('basket'));
+amount.textContent=StateBasket.amount.toFixed(2).replace(regDelimiter,',');
+counter.textContent=StateBasket.count;
+
+
+
 const addToBasket=(id)=>event=>{
     event.preventDefault();
     const product=products.find(item=>item.id===id);
@@ -90,9 +100,10 @@ const addToBasket=(id)=>event=>{
         basket.count++;
         basket.amount+=product.price.value;
         basket.products.unshift(id);
+        localStorage.setItem('basket',JSON.stringify(basket));
         amount.textContent=basket.amount.toFixed(2).replace(regDelimiter,',');
         counter.textContent=basket.count;
-       localStorage.setItem('id',JSON.stringify(basket.products));
+        //localStorage.setItem('id',JSON.stringify(basket.products));
 
 
 
@@ -103,11 +114,12 @@ const addToBasket=(id)=>event=>{
         basket.count--;
         basket.amount-=product.price.value;
         basket.products.splice(basket.products.indexOf(id),1);
+        localStorage.setItem('basket',JSON.stringify(basket));
         amount.textContent=basket.amount.toFixed(2).replace(regDelimiter,',');
         counter.textContent=basket.count;
-        let local=JSON.parse(localStorage.getItem('id'));
-        local.splice(local.indexOf(id),1);
-        localStorage.setItem('id',JSON.stringify(local));
+       // let local=JSON.parse(localStorage.getItem('id'));
+        //local.splice(local.indexOf(id),1);
+        //localStorage.setItem('id',JSON.stringify(local));
 
     }
 };
@@ -144,10 +156,10 @@ const content=(products,classActive)=>{
 
         let a=newDiv.querySelector('.button');
 
-        let interval=JSON.parse(localStorage.getItem('id'));
+        let interval=localStorage.getItem('basket');
         if(interval.includes(products[i].id)){
-            a.classList.add('active');
-            a.textContent='Remove from Basket';
+           a.classList.add('active');
+           a.textContent='Remove from Basket';
         }
         a.addEventListener('click',addToBasket(products[i].id));
         section.appendChild(newDiv);
@@ -185,15 +197,15 @@ input.addEventListener('input',(event)=>{
         if(reg.test(products[i].title)){
             search.unshift(products[i]);
             contents=search;
-           if(flag>0){
-               sortAsc(contents);
-               content(contents);
+            if(flag>0){
+                sortAsc(contents);
+                content(contents);
 
-           }
-           else{
-               sortDesc(contents);
-               content(contents);
-           }
+            }
+            else{
+                sortDesc(contents);
+                content(contents);
+            }
         }
     }
     if(search.length===0){
@@ -204,3 +216,4 @@ input.addEventListener('input',(event)=>{
 
 
 });
+
