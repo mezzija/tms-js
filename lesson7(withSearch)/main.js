@@ -52,6 +52,7 @@ const products = [
 ];
 let contents=products;
 
+
 let regDelimiter=new RegExp(/\B(?=(\d{3})+(?!\d))/g );
 
 const sortDesc=(arr)=>{
@@ -100,17 +101,9 @@ const addToBasket=(id)=>event=>{
         localBasket.count++;
         localBasket.amount+=product.price.value;
         localBasket.products.unshift(id);
-        //basket.count++;
-        //basket.amount+=product.price.value;
-        //basket.products.unshift(id);
         localStorage.setItem('basket',JSON.stringify(localBasket));
         amount.textContent=localBasket.amount.toFixed(2).replace(regDelimiter,',');
         counter.textContent=localBasket.count;
-
-
-
-
-
     }else{
         event.target.textContent= 'Add to Basket';
         let localBasket=JSON.parse(localStorage.getItem('basket'));
@@ -120,7 +113,6 @@ const addToBasket=(id)=>event=>{
         localStorage.setItem('basket',JSON.stringify(localBasket));
         amount.textContent=localBasket.amount.toFixed(2).replace(regDelimiter,',');
         counter.textContent=localBasket.count;
-
     }
 };
 
@@ -173,12 +165,16 @@ content(contents);
 
 let sort=document.getElementById('sort');
 
+
 let flag=0;
 sort.addEventListener('click',(event)=>{
 
     if(flag===0){
+
         sort.textContent='Asc';
         sortAsc(contents);
+        content(contents);
+
         flag++;
     }else{
         sort.textContent='Desc';
