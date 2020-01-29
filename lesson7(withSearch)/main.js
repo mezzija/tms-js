@@ -52,83 +52,57 @@ const products = [
 ];
 let contents=products;
 
+
 let regDelimiter=new RegExp(/\B(?=(\d{3})+(?!\d))/g );
 
-const sortDesc=(arr)=>{
-    arr.sort((a,b)=>{
-        if(a.price.value<b.price.value) return 1;
-        if(a.price.value>b.price.value) return -1;
-        else return 0;
-    });
+const amount=document.getElementById('amount');
+const counter=document.getElementById('counter');
+const section=document.getElementById('content');
+const sort=document.getElementById('sort');
+const input=document.getElementById('input');
+//
+let stateBasket=JSON.parse(localStorage.getItem('productsId')) || [];
+amount.textContent=products.reduce((acc,item)=>stateBasket.includes(item.id)?acc+=item.price.value:acc,0).toFixed(2).replace(regDelimiter,',');
+counter.textContent=stateBasket.length;
+// fun sort
+const ascDesc=(arr,sort)=>{
+    if(sort==='Desc'){
+        arr.sort((a,b)=>{
+            if(a.price.value<b.price.value) return 1;
+            if(a.price.value>b.price.value) return -1;
+            else return 0;
+        });
+    }else if(sort==='Asc'){
+        arr.sort((a,b)=>{
+            if(a.price.value<b.price.value) return -1;
+            if(a.price.value>b.price.value) return 1;
+            else return 0;
+        });
+    }
 };
-const sortAsc=(arr)=>{
-    arr.sort((a,b)=>{
-        if(a.price.value<b.price.value) return -1;
-        if(a.price.value>b.price.value) return 1;
-        else return 0;
-    });
-};
-
-sortDesc(products);
-
-basket = {
-    count: 0,
-    amount: 0,
-    products: [],
-};
-
-if(localStorage.getItem('basket')===null){
-    localStorage.setItem('basket',JSON.stringify(basket));
-}
-
-let amount=document.getElementById('amount');
-let counter=document.getElementById('counter');
-
-let StateBasket=JSON.parse(localStorage.getItem('basket'));
-amount.textContent=StateBasket.amount.toFixed(2).replace(regDelimiter,',');
-counter.textContent=StateBasket.count;
-
-
-
+// event add to basket
 const addToBasket=(id)=>event=>{
     event.preventDefault();
     const product=products.find(item=>item.id===id);
     event.target.classList.toggle('active');
     if(event.target.classList.contains('active')){
         event.target.textContent= 'Remove from Basket';
-
-        basket.count++;
-        basket.amount+=product.price.value;
-        basket.products.unshift(id);
-        localStorage.setItem('basket',JSON.stringify(basket));
-        amount.textContent=basket.amount.toFixed(2).replace(regDelimiter,',');
-        counter.textContent=basket.count;
-        //localStorage.setItem('id',JSON.stringify(basket.products));
-
-
-
-
+        let localBasket=JSON.parse(localStorage.getItem('productsId'));
+        localBasket.push(id);
+        localStorage.setItem('productsId',JSON.stringify(localBasket));
+        amount.textContent=products.reduce((acc,item)=>localBasket.includes(item.id)?acc+=item.price.value:acc,0).toFixed(2).replace(regDelimiter,',');
+        counter.textContent=localBasket.length;
     }else{
         event.target.textContent= 'Add to Basket';
-
-        basket.count--;
-        basket.amount-=product.price.value;
-        basket.products.splice(basket.products.indexOf(id),1);
-        localStorage.setItem('basket',JSON.stringify(basket));
-        amount.textContent=basket.amount.toFixed(2).replace(regDelimiter,',');
-        counter.textContent=basket.count;
-       // let local=JSON.parse(localStorage.getItem('id'));
-        //local.splice(local.indexOf(id),1);
-        //localStorage.setItem('id',JSON.stringify(local));
-
+        let localBasket=JSON.parse(localStorage.getItem('productsId'));
+        localBasket.splice(localBasket.indexOf(id),1);
+        localStorage.setItem('productsId',JSON.stringify(localBasket));
+        amount.textContent=products.reduce((acc,item)=>localBasket.includes(item.id)?acc+=item.price.value:acc,0 ).toFixed(2).replace(regDelimiter,',');
+        counter.textContent=localBasket.length;
     }
 };
-
-const section=document.getElementById('content');
-// отрисовка
-
-
-const content=(products,classActive)=>{
+// drawing content
+const content=(products)=>{
     section.innerHTML='';
     for(let i=0;i<products.length;i++){
         let newDiv=document.createElement('div');
@@ -138,7 +112,6 @@ const content=(products,classActive)=>{
         if(products[i].price.currency==='USD'){
             currency='$';
         }
-
         newDiv.innerHTML=`
     <div class="img">
       <img src=${products[i].imageLink}>
@@ -149,47 +122,39 @@ const content=(products,classActive)=>{
     </div>
     <div class="contentPrice">
       <p >${currency}${products[i].price.value.toFixed(2).replace(regDelimiter,',')}</p>
-      <a class="button ${classActive}" href="#">Add to Basket</a>
+      <a class="button" href="#">Add to Basket</a>
     </div>
     
     `;
-
         let a=newDiv.querySelector('.button');
 
-        let interval=localStorage.getItem('basket');
+        let interval=localStorage.getItem('productsId');
         if(interval.includes(products[i].id)){
-           a.classList.add('active');
-           a.textContent='Remove from Basket';
+            a.classList.add('active');
+            a.textContent='Remove from Basket';
         }
         a.addEventListener('click',addToBasket(products[i].id));
         section.appendChild(newDiv);
 
     }
 };
-
-
-content(contents);
-
-
-let sort=document.getElementById('sort');
-
+// event sort
 let flag=0;
 sort.addEventListener('click',(event)=>{
-
     if(flag===0){
         sort.textContent='Asc';
-        sortAsc(contents);
+        ascDesc(contents,'Asc');
+        content(contents);
         flag++;
     }else{
         sort.textContent='Desc';
-        sortDesc(contents);
+        ascDesc(contents,'Desc');
         content(contents);
         flag=0;
     }
 });
 
-
-const input=document.getElementById('input');
+// event search
 input.addEventListener('input',(event)=>{
     let search=[];
     for(let i=0;i<products.length;i++){
@@ -198,12 +163,11 @@ input.addEventListener('input',(event)=>{
             search.unshift(products[i]);
             contents=search;
             if(flag>0){
-                sortAsc(contents);
+                ascDesc(contents,'Asc');
                 content(contents);
-
             }
             else{
-                sortDesc(contents);
+                ascDesc(contents,'Desc');
                 content(contents);
             }
         }
@@ -213,7 +177,10 @@ input.addEventListener('input',(event)=>{
                  <p class="NoResult">No results found for your request</p>
             `;
     }
-
-
 });
+ascDesc(products,'Desc');
+content(contents);
+
+
+
 

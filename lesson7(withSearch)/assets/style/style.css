@@ -35,6 +35,9 @@ header{
 .header .container{
     padding:18px 0 10px 0;
 }
+.sizeBasket{
+    width: 80px;
+}
 .Basket{
     position: absolute;
 }
@@ -44,7 +47,7 @@ header{
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    left: 115%;
+    transform: translate(51px, -3px);
     display: flex;
     justify-content: center;
     align-items: center;
