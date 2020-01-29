@@ -55,56 +55,71 @@ let contents=products;
 
 let regDelimiter=new RegExp(/\B(?=(\d{3})+(?!\d))/g );
 
-const amount=document.getElementById('amount');
-const counter=document.getElementById('counter');
-const section=document.getElementById('content');
-const sort=document.getElementById('sort');
-const input=document.getElementById('input');
-//
-if(localStorage.getItem('productsId')===null){
-    localStorage.setItem('productsId','[]');
-}
-let stateBasket=JSON.parse(localStorage.getItem('productsId')) ;
-amount.textContent=products.reduce((acc,item)=>stateBasket.includes(item.id)?acc+=item.price.value:acc,0).toFixed(2).replace(regDelimiter,',');
-counter.textContent=stateBasket.length;
-// fun sort
-const ascDesc=(arr,sort)=>{
-    if(sort==='Desc'){
-        arr.sort((a,b)=>{
-            if(a.price.value<b.price.value) return 1;
-            if(a.price.value>b.price.value) return -1;
-            else return 0;
-        });
-    }else if(sort==='Asc'){
-        arr.sort((a,b)=>{
-            if(a.price.value<b.price.value) return -1;
-            if(a.price.value>b.price.value) return 1;
-            else return 0;
-        });
-    }
+const sortDesc=(arr)=>{
+    arr.sort((a,b)=>{
+        if(a.price.value<b.price.value) return 1;
+        if(a.price.value>b.price.value) return -1;
+        else return 0;
+    });
 };
-// event add to basket
+const sortAsc=(arr)=>{
+    arr.sort((a,b)=>{
+        if(a.price.value<b.price.value) return -1;
+        if(a.price.value>b.price.value) return 1;
+        else return 0;
+    });
+};
+
+sortDesc(products);
+
+basket = {
+    count: 0,
+    amount: 0,
+    products: [],
+};
+
+// if(localStorage.getItem('basket')===null){
+//     localStorage.setItem('basket',JSON.stringify(basket));
+// }
+
+let amount=document.getElementById('amount');
+let counter=document.getElementById('counter');
+
+let StateBasket=JSON.parse(localStorage.getItem('basket'));
+amount.textContent=StateBasket.amount.toFixed(2).replace(regDelimiter,',');
+counter.textContent=StateBasket.count;
+
+
+
 const addToBasket=(id)=>event=>{
     event.preventDefault();
     const product=products.find(item=>item.id===id);
     event.target.classList.toggle('active');
     if(event.target.classList.contains('active')){
         event.target.textContent= 'Remove from Basket';
-        let localBasket=JSON.parse(localStorage.getItem('productsId'));
-        localBasket.push(id);
-        localStorage.setItem('productsId',JSON.stringify(localBasket));
-        amount.textContent=products.reduce((acc,item)=>localBasket.includes(item.id)?acc+=item.price.value:acc,0).toFixed(2).replace(regDelimiter,',');
-        counter.textContent=localBasket.length;
+        let localBasket=JSON.parse(localStorage.getItem('basket'));
+        localBasket.count++;
+        localBasket.amount+=product.price.value;
+        localBasket.products.unshift(id);
+        localStorage.setItem('basket',JSON.stringify(localBasket));
+        amount.textContent=localBasket.amount.toFixed(2).replace(regDelimiter,',');
+        counter.textContent=localBasket.count;
     }else{
         event.target.textContent= 'Add to Basket';
-        let localBasket=JSON.parse(localStorage.getItem('productsId'));
-        localBasket.splice(localBasket.indexOf(id),1);
-        localStorage.setItem('productsId',JSON.stringify(localBasket));
-        amount.textContent=products.reduce((acc,item)=>localBasket.includes(item.id)?acc+=item.price.value:acc,0 ).toFixed(2).replace(regDelimiter,',');
-        counter.textContent=localBasket.length;
+        let localBasket=JSON.parse(localStorage.getItem('basket'));
+        localBasket.count--;
+        localBasket.amount-=product.price.value;
+        localBasket.products.splice(basket.products.indexOf(id),1);
+        localStorage.setItem('basket',JSON.stringify(localBasket));
+        amount.textContent=localBasket.amount.toFixed(2).replace(regDelimiter,',');
+        counter.textContent=localBasket.count;
     }
 };
-// drawing content
+
+const section=document.getElementById('content');
+// отрисовка
+
+
 const content=(products)=>{
     section.innerHTML='';
     for(let i=0;i<products.length;i++){
@@ -115,6 +130,7 @@ const content=(products)=>{
         if(products[i].price.currency==='USD'){
             currency='$';
         }
+
         newDiv.innerHTML=`
     <div class="img">
       <img src=${products[i].imageLink}>
@@ -129,9 +145,10 @@ const content=(products)=>{
     </div>
     
     `;
+
         let a=newDiv.querySelector('.button');
 
-        let interval=localStorage.getItem('productsId');
+        let interval=localStorage.getItem('basket') || [];
         if(interval.includes(products[i].id)){
             a.classList.add('active');
             a.textContent='Remove from Basket';
@@ -141,23 +158,34 @@ const content=(products)=>{
 
     }
 };
-// event sort
+
+
+content(contents);
+
+
+let sort=document.getElementById('sort');
+
+
 let flag=0;
 sort.addEventListener('click',(event)=>{
+
     if(flag===0){
+
         sort.textContent='Asc';
-        ascDesc(contents,'Asc');
+        sortAsc(contents);
         content(contents);
+
         flag++;
     }else{
         sort.textContent='Desc';
-        ascDesc(contents,'Desc');
+        sortDesc(contents);
         content(contents);
         flag=0;
     }
 });
 
-// event search
+
+const input=document.getElementById('input');
 input.addEventListener('input',(event)=>{
     let search=[];
     for(let i=0;i<products.length;i++){
@@ -166,11 +194,12 @@ input.addEventListener('input',(event)=>{
             search.unshift(products[i]);
             contents=search;
             if(flag>0){
-                ascDesc(contents,'Asc');
+                sortAsc(contents);
                 content(contents);
+
             }
             else{
-                ascDesc(contents,'Desc');
+                sortDesc(contents);
                 content(contents);
             }
         }
@@ -181,6 +210,5 @@ input.addEventListener('input',(event)=>{
             `;
     }
 });
-ascDesc(products,'Desc');
-content(contents);
 
+console.log(window.history);
