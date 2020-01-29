@@ -61,7 +61,10 @@ const section=document.getElementById('content');
 const sort=document.getElementById('sort');
 const input=document.getElementById('input');
 //
-let stateBasket=JSON.parse(localStorage.getItem('productsId')) || [];
+if(localStorage.getItem('productsId')===null){
+    localStorage.setItem('productsId','[]');
+}
+let stateBasket=JSON.parse(localStorage.getItem('productsId')) ;
 amount.textContent=products.reduce((acc,item)=>stateBasket.includes(item.id)?acc+=item.price.value:acc,0).toFixed(2).replace(regDelimiter,',');
 counter.textContent=stateBasket.length;
 // fun sort
@@ -180,7 +183,4 @@ input.addEventListener('input',(event)=>{
 });
 ascDesc(products,'Desc');
 content(contents);
-
-
-//localStorage.clear()
 
