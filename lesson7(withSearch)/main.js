@@ -182,5 +182,5 @@ ascDesc(products,'Desc');
 content(contents);
 
 
-
+//localStorage.clear()
 
