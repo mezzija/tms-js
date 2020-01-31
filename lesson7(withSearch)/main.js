@@ -51,6 +51,17 @@ const products = [
     }
 ];
 let contents=products;
+const exchanger=async ()=>{
+
+  return await fetch('http://www.nbrb.by/api/exrates/rates/840?parammode=1')
+      .then(response=>response.json())
+      .then(data=>data)
+      .catch(error=>console.log('error'));
+
+
+};
+const data=exchanger();
+console.log(data);
 
 
 let regDelimiter=new RegExp(/\B(?=(\d{3})+(?!\d))/g );
