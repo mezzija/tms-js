@@ -51,8 +51,12 @@
             imageLink: 'https://www.apple.com/v/iphone/home/af/images/overview/compare/compare_iphone_11_pro__fvqwhr4dkhiu_large.jpg'
         }
     ];
-    let contents={...products};
-    console.log(contents);
+    let contents=products.concat();
+
+
+
+    //let contents=products;
+
 
     const exchanger= ()=>{
 
@@ -64,7 +68,7 @@
 
     };
     const data= await exchanger();
-    console.log(data.Cur_OfficialRate);
+    console.log(data);
 
 
     let regDelimiter=new RegExp(/\B(?=(\d{3})+(?!\d))/g );
@@ -123,6 +127,7 @@
     let currency;
     const content=(products)=>{
         section.innerHTML='';
+
         for(let i=0;i<products.length;i++){
             let newDiv=document.createElement('div');
             newDiv.classList.add('content');
@@ -133,6 +138,7 @@
             }else if(products[i].price.currency==='BYN'){
                 currency='BYN';
             }
+
             newDiv.innerHTML=`
     <div class="img">
       <img src=${products[i].imageLink}>
@@ -201,10 +207,9 @@
     });
     changeValue.addEventListener("click", (event)=>{
         event.preventDefault();
-        console.log(products);
         if(changeValue.textContent==='USD'){
             changeValue.textContent='BYN';
-            for(let i=0;i<products.length;i++){
+            for(let i=0;i<contents.length;i++){
                 contents[i].price.value*=data.Cur_OfficialRate;
                 contents[i].price.currency='BYN';
 
@@ -213,13 +218,14 @@
         }else if(changeValue.textContent==='BYN'){
             changeValue.textContent='USD';
             for(let i=0;i<products.length;i++){
-                contents[i].price.value=products[i].price.value;
+                contents[i].price.value=contents[i].price.value/data.Cur_OfficialRate;
                 contents[i].price.currency='USD';
             }
             content(contents);
         }
 
     });
-    ascDesc(products,'Desc');
+    ascDesc(contents,'Desc');
     content(contents);
+
 }());
