@@ -68,8 +68,6 @@
 
     };
     const data= await exchanger();
-    console.log(data);
-
 
     let regDelimiter=new RegExp(/\B(?=(\d{3})+(?!\d))/g );
 
@@ -184,7 +182,14 @@
 // event search
     input.addEventListener('input',(event)=>{
         let search=[];
-        for(let i=0;i<products.length;i++){
+        const reg=new RegExp(`${event.target.value}`,'gi');
+        search=contents.filter(item=>{
+
+            return reg.test(item.title);
+        });
+        console.log(search);
+
+        /*for(let i=0;i<products.length;i++){
             const reg=new RegExp(`${event.target.value}`,'gi');
             if(reg.test(products[i].title)){
                 search.unshift(products[i]);
@@ -198,12 +203,12 @@
                     content(contents);
                 }
             }
-        }
-        if(search.length===0){
+        }*/
+      /*  if(search.length===0){
             section.innerHTML=`
                  <p class="NoResult">No results found for your request</p>
             `;
-        }
+        }*/
     });
     changeValue.addEventListener("click", (event)=>{
         event.preventDefault();
@@ -224,3 +229,8 @@
             content(contents);
         }
 
+    });
+    ascDesc(contents,'Desc');
+    content(contents);
+
+}());
