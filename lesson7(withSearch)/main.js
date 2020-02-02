@@ -51,40 +51,34 @@
             imageLink: 'https://www.apple.com/v/iphone/home/af/images/overview/compare/compare_iphone_11_pro__fvqwhr4dkhiu_large.jpg'
         }
     ];
+
+
     let contents=products.concat();
 
-
-
-    //let contents=products;
-
-
     const exchanger= ()=>{
-
         return  fetch('http://www.nbrb.by/api/exrates/rates/840?parammode=1')
             .then(response=>response.json())
             .then(data=>data)
             .catch(error=>console.log('error'));
-
-
     };
     const data= await exchanger();
 
-    let regDelimiter=new RegExp(/\B(?=(\d{3})+(?!\d))/g );
-
+    const regDelimiter=new RegExp(/\B(?=(\d{3})+(?!\d))/g );
     const amount=document.getElementById('amount');
     const counter=document.getElementById('counter');
     const section=document.getElementById('content');
     const sort=document.getElementById('sort');
     const input=document.getElementById('input');
     const changeValue=document.getElementById('changeValue');
-//
+// see localstorage
+
     if(localStorage.getItem('productsId')===null){
         localStorage.setItem('productsId','[]');
     }
     let stateBasket=JSON.parse(localStorage.getItem('productsId')) ;
     amount.textContent=products.reduce((acc,item)=>stateBasket.includes(item.id)?acc+=item.price.value:acc,0).toFixed(2).replace(regDelimiter,',');
     counter.textContent=stateBasket.length;
-// fun sort
+
     const ascDesc=(arr,sort)=>{
         if(sort==='Desc'){
             arr.sort((a,b)=>{
@@ -125,18 +119,15 @@
     let currency;
     const content=(products)=>{
         section.innerHTML='';
-
         for(let i=0;i<products.length;i++){
             let newDiv=document.createElement('div');
             newDiv.classList.add('content');
             newDiv.classList.add('row');
-
             if(products[i].price.currency==='USD'){
                 currency='$';
             }else if(products[i].price.currency==='BYN'){
                 currency='BYN';
             }
-
             newDiv.innerHTML=`
     <div class="img">
       <img src=${products[i].imageLink}>
@@ -160,7 +151,6 @@
             }
             a.addEventListener('click',addToBasket(products[i].id));
             section.appendChild(newDiv);
-
         }
     };
 // event sort
@@ -181,48 +171,35 @@
 
 // event search
     input.addEventListener('input',(event)=>{
-        let search=[];
-        const reg=new RegExp(`${event.target.value}`,'gi');
-        search=contents.filter(item=>{
 
-            return reg.test(item.title);
-        });
-        console.log(search);
-
-        /*for(let i=0;i<products.length;i++){
-            const reg=new RegExp(`${event.target.value}`,'gi');
-            if(reg.test(products[i].title)){
-                search.unshift(products[i]);
-                contents=search;
-                if(flag>0){
-                    ascDesc(contents,'Asc');
-                    content(contents);
-                }
-                else{
-                    ascDesc(contents,'Desc');
-                    content(contents);
-                }
-            }
-        }*/
-      /*  if(search.length===0){
+        const reg=new RegExp(event.target.value,'i');
+        let search=products.filter(item=> reg.test(item.title));
+        contents=search;
+        if(flag>0){
+            ascDesc(contents,'Asc');
+            content(contents);
+        }else{
+            ascDesc(contents,'Desc');
+            content(contents);
+        }
+        if(search.length===0){
             section.innerHTML=`
                  <p class="NoResult">No results found for your request</p>
             `;
-        }*/
+        }
     });
     changeValue.addEventListener("click", (event)=>{
         event.preventDefault();
         if(changeValue.textContent==='USD'){
-            changeValue.textContent='BYN';
+           changeValue.textContent='BYN';
             for(let i=0;i<contents.length;i++){
                 contents[i].price.value*=data.Cur_OfficialRate;
                 contents[i].price.currency='BYN';
-
             }
             content(contents);
         }else if(changeValue.textContent==='BYN'){
             changeValue.textContent='USD';
-            for(let i=0;i<products.length;i++){
+            for(let i=0;i<contents.length;i++){
                 contents[i].price.value=contents[i].price.value/data.Cur_OfficialRate;
                 contents[i].price.currency='USD';
             }
@@ -232,5 +209,4 @@
     });
     ascDesc(contents,'Desc');
     content(contents);
-
 }());
