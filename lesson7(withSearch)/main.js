@@ -55,6 +55,15 @@
 
     let contents=products.concat();
 
+    if(localStorage.getItem('state')===null){
+        let state={
+            currency:'USD',
+            sort:'Desk',
+            productsId: [],
+        };
+        localStorage.setItem('state',JSON.stringify(state));
+    }
+
     const exchanger= ()=>{
         return  fetch('http://www.nbrb.by/api/exrates/rates/840?parammode=1')
             .then(response=>response.json())
@@ -70,19 +79,15 @@
     const sort=document.getElementById('sort');
     const input=document.getElementById('input');
     const changeValue=document.getElementById('changeValue');
-// see localstorage
 
-    if(localStorage.getItem('state')===null){
-        let state={
-            currency:'USD',
-            sort:'Desk',
-            productsId: [],
-        };
-        localStorage.setItem('state',JSON.stringify(state));
-    }
-    let stateBasket=JSON.parse(localStorage.getItem('state')) ;
-    amount.textContent=products.reduce((acc,item)=>stateBasket.productsId.includes(item.id)?acc+=item.price.value:acc,0).toFixed(2).replace(regDelimiter,',');
-    counter.textContent=stateBasket.productsId.length;
+
+    const findAmount=(products,local)=>{
+      return   products.reduce((acc,item)=>local.productsId.includes(item.id)?acc+=item.price.value:acc,0);
+    };
+
+    const viewNumber=(num)=>{
+        return num.toFixed(2).replace(regDelimiter,',');
+    };
 
     const ascDesc=(arr,sort)=>{
         if(sort==='Desc'){
@@ -99,7 +104,7 @@
             });
         }
     };
-// event add to basket
+
     const addToBasket=(id)=>event=>{
         event.preventDefault();
         const product=products.find(item=>item.id===id);
@@ -109,25 +114,25 @@
             let localBasket=JSON.parse(localStorage.getItem('state'));
             localBasket.productsId.push(id);
             localStorage.setItem('state',JSON.stringify(localBasket));
-            amount.textContent=products.reduce((acc,item)=>localBasket.productsId.includes(item.id)?acc+=item.price.value:acc,0).toFixed(2).replace(regDelimiter,',');
+            amount.textContent=viewNumber(findAmount(products,localBasket));
             counter.textContent=localBasket.productsId.length;
         }else{
             event.target.textContent= 'Add to Basket';
             let localBasket=JSON.parse(localStorage.getItem('state'));
             localBasket.productsId.splice(localBasket.productsId.indexOf(id),1);
             localStorage.setItem('state',JSON.stringify(localBasket));
-            amount.textContent=products.reduce((acc,item)=>localBasket.productsId.includes(item.id)?acc+=item.price.value:acc,0 ).toFixed(2).replace(regDelimiter,',');
+            amount.textContent=viewNumber(findAmount(products,localBasket));
             counter.textContent=localBasket.productsId.length;
         }
     };
-// drawing content
-    let currency;
+
     const content=(products)=>{
         section.innerHTML='';
         for(let i=0;i<products.length;i++){
             let newDiv=document.createElement('div');
             newDiv.classList.add('content');
             newDiv.classList.add('row');
+            let currency;
             if(products[i].price.currency==='USD'){
                 currency='$';
             }else if(products[i].price.currency==='BYN'){
@@ -142,13 +147,12 @@
       <p class="characteristic">${products[i].description}</p>
     </div>
     <div class="contentPrice">
-      <p >${currency} ${products[i].price.value.toFixed(2).replace(regDelimiter,',')}</p>
+      <p >${currency} ${viewNumber(products[i].price.value)}</p>
       <a class="button" href="#">Add to Basket</a>
     </div>
     
     `;
             let a=newDiv.querySelector('.button');
-
             let interval=localStorage.getItem('state');
             if(interval.includes(products[i].id)){
                 a.classList.add('active');
@@ -158,22 +162,52 @@
             section.appendChild(newDiv);
         }
     };
-// event sort
+
     let flag=0;
     sort.addEventListener('click',(event)=>{
         if(flag===0){
+            let local=JSON.parse(localStorage.getItem('state'));
+            local.sort='Asc';
+            localStorage.setItem('state',JSON.stringify(local));
             sort.textContent='Asc';
             ascDesc(contents,'Asc');
             content(contents);
             flag++;
         }else{
+            let local=JSON.parse(localStorage.getItem('state'));
+            local.sort='Desc';
+            localStorage.setItem('state',JSON.stringify(local));
             sort.textContent='Desc';
             ascDesc(contents,'Desc');
             content(contents);
             flag=0;
         }
     });
-// event search
+
+    const startDrawContent=()=>{
+        let stateBasket=JSON.parse(localStorage.getItem('state')) ;
+        amount.textContent=viewNumber(findAmount(products,stateBasket));
+        counter.textContent=stateBasket.productsId.length;
+        if(stateBasket.currency==='BYN'){
+            changeValue.textContent='BYN';
+            for(let i=0;i<contents.length;i++){
+                contents[i].price.value*=data.Cur_OfficialRate;
+                contents[i].price.currency='BYN';
+            }
+        }
+        if(stateBasket.sort==='Asc'){
+            sort.textContent='Asc';
+            ascDesc(contents,'Asc');
+            content(contents);
+            flag++;
+        }else
+        if(stateBasket.sort==='Desc'){
+            sort.textContent='Desc';
+            ascDesc(contents,'Desc');
+            content(contents);
+        }
+    };
+
     input.addEventListener('input',(event)=>{
 
         const reg=new RegExp(`^${event.target.value}`,'i');
@@ -192,6 +226,7 @@
             `;
         }
     });
+
     changeValue.addEventListener("click", (event)=>{
         event.preventDefault();
         if(changeValue.textContent==='USD'){
@@ -200,6 +235,9 @@
                 contents[i].price.value*=data.Cur_OfficialRate;
                 contents[i].price.currency='BYN';
             }
+            let local=JSON.parse(localStorage.getItem('state'));
+            local.currency='BYN';
+            localStorage.setItem('state',JSON.stringify(local));
             content(contents);
         }else if(changeValue.textContent==='BYN'){
             changeValue.textContent='USD';
@@ -207,10 +245,14 @@
                 contents[i].price.value=contents[i].price.value/data.Cur_OfficialRate;
                 contents[i].price.currency='USD';
             }
+            let local=JSON.parse(localStorage.getItem('state'));
+            local.currency='USD';
+            localStorage.setItem('state',JSON.stringify(local));
             content(contents);
         }
 
     });
-    ascDesc(contents,'Desc');
-    content(contents);
+
+    startDrawContent();
+
 }());
