@@ -72,12 +72,17 @@
     const changeValue=document.getElementById('changeValue');
 // see localstorage
 
-    if(localStorage.getItem('productsId')===null){
-        localStorage.setItem('productsId','[]');
+    if(localStorage.getItem('state')===null){
+        let state={
+            currency:'USD',
+            sort:'Desk',
+            productsId: [],
+        };
+        localStorage.setItem('state',JSON.stringify(state));
     }
-    let stateBasket=JSON.parse(localStorage.getItem('productsId')) ;
-    amount.textContent=products.reduce((acc,item)=>stateBasket.includes(item.id)?acc+=item.price.value:acc,0).toFixed(2).replace(regDelimiter,',');
-    counter.textContent=stateBasket.length;
+    let stateBasket=JSON.parse(localStorage.getItem('state')) ;
+    amount.textContent=products.reduce((acc,item)=>stateBasket.productsId.includes(item.id)?acc+=item.price.value:acc,0).toFixed(2).replace(regDelimiter,',');
+    counter.textContent=stateBasket.productsId.length;
 
     const ascDesc=(arr,sort)=>{
         if(sort==='Desc'){
@@ -101,18 +106,18 @@
         event.target.classList.toggle('active');
         if(event.target.classList.contains('active')){
             event.target.textContent= 'Remove from Basket';
-            let localBasket=JSON.parse(localStorage.getItem('productsId'));
-            localBasket.push(id);
-            localStorage.setItem('productsId',JSON.stringify(localBasket));
-            amount.textContent=products.reduce((acc,item)=>localBasket.includes(item.id)?acc+=item.price.value:acc,0).toFixed(2).replace(regDelimiter,',');
-            counter.textContent=localBasket.length;
+            let localBasket=JSON.parse(localStorage.getItem('state'));
+            localBasket.productsId.push(id);
+            localStorage.setItem('state',JSON.stringify(localBasket));
+            amount.textContent=products.reduce((acc,item)=>localBasket.productsId.includes(item.id)?acc+=item.price.value:acc,0).toFixed(2).replace(regDelimiter,',');
+            counter.textContent=localBasket.productsId.length;
         }else{
             event.target.textContent= 'Add to Basket';
-            let localBasket=JSON.parse(localStorage.getItem('productsId'));
-            localBasket.splice(localBasket.indexOf(id),1);
-            localStorage.setItem('productsId',JSON.stringify(localBasket));
-            amount.textContent=products.reduce((acc,item)=>localBasket.includes(item.id)?acc+=item.price.value:acc,0 ).toFixed(2).replace(regDelimiter,',');
-            counter.textContent=localBasket.length;
+            let localBasket=JSON.parse(localStorage.getItem('state'));
+            localBasket.productsId.splice(localBasket.productsId.indexOf(id),1);
+            localStorage.setItem('state',JSON.stringify(localBasket));
+            amount.textContent=products.reduce((acc,item)=>localBasket.productsId.includes(item.id)?acc+=item.price.value:acc,0 ).toFixed(2).replace(regDelimiter,',');
+            counter.textContent=localBasket.productsId.length;
         }
     };
 // drawing content
@@ -144,7 +149,7 @@
     `;
             let a=newDiv.querySelector('.button');
 
-            let interval=localStorage.getItem('productsId');
+            let interval=localStorage.getItem('state');
             if(interval.includes(products[i].id)){
                 a.classList.add('active');
                 a.textContent='Remove from Basket';
@@ -168,11 +173,10 @@
             flag=0;
         }
     });
-
 // event search
     input.addEventListener('input',(event)=>{
 
-        const reg=new RegExp(event.target.value,'i');
+        const reg=new RegExp(`^${event.target.value}`,'i');
         let search=products.filter(item=> reg.test(item.title));
         contents=search;
         if(flag>0){
