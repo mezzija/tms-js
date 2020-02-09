@@ -56,19 +56,19 @@ class Students {
     }
     getInfo(){
         let students=[] ;
-        this.studentsData.sort((a,b)=>{
-            if(a.admissionYear<b.admissionYear) return 1;
-            if(a.admissionYear>b.admissionYear) return -1;
-        });
         for (let i=0;i<this.studentsData.length;i++){
             let student= new Student(this.studentsData[i].admissionYear,this.studentsData[i].courseName,this.studentsData[i].firstName,this.studentsData[i].lastName);
-
             students.push(`${student.fullName}-${student.nameCourse},${student.course} курс`);
         }
+        students.sort((a, b)=>{
+            if(a.substr(a.search(/[1-5]/),1)>b.substr(b.search(/[1-5]/),1)) return 1;
+            if(a.substr(a.search(/[1-5]/),1)<b.substr(b.search(/[1-5]/),1)) return -1;
+        });
         return students;
     }
 }
 
 const students = new Students(studentsData);
 console.log(students.getInfo());
+
 

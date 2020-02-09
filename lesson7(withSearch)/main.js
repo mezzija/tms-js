@@ -58,7 +58,7 @@
     if(localStorage.getItem('state')===null){
         let state={
             currency:'USD',
-            sort:'Desk',
+            sort:'Desc',
             productsId: [],
         };
         localStorage.setItem('state',JSON.stringify(state));
@@ -82,7 +82,7 @@
 
 
     const findAmount=(products,local)=>{
-      return   products.reduce((acc,item)=>local.productsId.includes(item.id)?acc+=item.price.value:acc,0);
+        return   products.reduce((acc,item)=>local.productsId.includes(item.id)?acc+=item.price.value:acc,0);
     };
 
     const viewNumber=(num)=>{
@@ -188,22 +188,24 @@
         let stateBasket=JSON.parse(localStorage.getItem('state')) ;
         amount.textContent=viewNumber(findAmount(products,stateBasket));
         counter.textContent=stateBasket.productsId.length;
+        if(stateBasket.sort==='Desc'){
+            sort.textContent='Desc';
+            ascDesc(contents,'Desc');
+            content(contents);
+        }else
+        if(stateBasket.sort==='Asc'){
+            sort.textContent='Asc';
+            ascDesc(contents,'Asc');
+            content(contents);
+            flag++;
+        }
+
         if(stateBasket.currency==='BYN'){
             changeValue.textContent='BYN';
             for(let i=0;i<contents.length;i++){
                 contents[i].price.value*=data.Cur_OfficialRate;
                 contents[i].price.currency='BYN';
             }
-        }
-        if(stateBasket.sort==='Asc'){
-            sort.textContent='Asc';
-            ascDesc(contents,'Asc');
-            content(contents);
-            flag++;
-        }else
-        if(stateBasket.sort==='Desc'){
-            sort.textContent='Desc';
-            ascDesc(contents,'Desc');
             content(contents);
         }
     };
@@ -230,7 +232,7 @@
     changeValue.addEventListener("click", (event)=>{
         event.preventDefault();
         if(changeValue.textContent==='USD'){
-           changeValue.textContent='BYN';
+            changeValue.textContent='BYN';
             for(let i=0;i<contents.length;i++){
                 contents[i].price.value*=data.Cur_OfficialRate;
                 contents[i].price.currency='BYN';
