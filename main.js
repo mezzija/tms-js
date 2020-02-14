@@ -72,3 +72,27 @@ const students = new Students(studentsData);
 console.log(students.getInfo());
 
 
+
+
+const arr=[
+    {
+        name: "pituh1",
+        value: 1,
+    },
+    {
+        name: "pituh2",
+        value: 2,
+    },
+    {
+        name: "pituh3",
+        value: 3,
+    },
+];
+let obj={};
+for (let i=0;i<arr.length;i++){
+
+   let a=arr[i].name;
+   obj[a]=arr[i].value;
+}
+console.log(obj);
+
